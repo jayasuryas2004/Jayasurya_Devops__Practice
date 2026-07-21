@@ -1,17 +1,19 @@
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
 def factorial(n):
-    if n < 0:
-        return "Factorial not possible"
-
-    if n == 0 or n == 1:
+    if n <= 1:
         return 1
+    return n * factorial(n - 1)
 
-    result = 1
-
-    for i in range(2, n + 1):
-        result *= i
-
-    return result
-
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        result = factorial(10)
+        self.wfile.write(f"<h1>Factorial of 5 is {result}</h1>".encode())
 
 if __name__ == "__main__":
-    print(factorial(5))
+    server = HTTPServer(("0.0.0.0", 8000), Handler)
+    print("Server running on port 8000")
+    server.serve_forever()
